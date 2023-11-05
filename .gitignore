@@ -5,3 +5,5 @@
 .env.production.local
 .env.local
 debug.log
+# Fresh build directory
+_fresh/
