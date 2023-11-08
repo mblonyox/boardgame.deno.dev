@@ -1,24 +1,25 @@
-import { AppProps } from "$fresh/server.ts";
-import { Head } from "$fresh/runtime.ts";
-import Header from "../components/Header.tsx";
-import Footer from "../components/Footer.tsx";
+import { defineApp } from "$fresh/server.ts";
 
-export default function App({ Component }: AppProps) {
+export default defineApp((_req, { Component }) => {
   return (
-    <>
-      <Head>
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
           rel="stylesheet"
-          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
           crossOrigin="anonymous"
         />
-      </Head>
-      <Header />
-      <main>
-        {<Component />}
-      </main>
-      <Footer />
-    </>
+      </head>
+      <Component />
+      <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossOrigin="anonymous"
+      >
+      </script>
+    </html>
   );
-}
+});
