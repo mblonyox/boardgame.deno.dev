@@ -22,13 +22,13 @@ export class API {
     );
   }
 
-  routes(path = "/"): PluginRoute[] {
+  routes(base = ""): PluginRoute[] {
     return [{
-      path: path + "/games",
+      path: base + "/api/games",
       handler: (_req, _ctx) =>
         this.jsonResponse(this.games.map((game) => game.name)),
     }, {
-      path: path + "/games/[name]/create",
+      path: base + "/api/games/[name]/create",
       handler: {
         POST: async (req, ctx) => {
           const gameName = ctx.params.name;

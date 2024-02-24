@@ -1,4 +1,4 @@
-import { PluginMiddleware } from "$fresh/server.ts";
+import { PluginRoute } from "$fresh/server.ts";
 import PQueue from "p-queue";
 import { Game } from "boardgame.io";
 import { Async, getFilterPlayerView, Sync } from "boardgame.io/internal";
@@ -113,83 +113,27 @@ export class WebSocketTransport {
     this.perMatchQueue.delete(matchID);
   }
 
-  middleware(prefix = "/api"): PluginMiddleware {
+  route(): PluginRoute {
     return {
-      path: prefix + "/game/[gameName]",
-      middleware: {
-        handler: (req, ctx) => {
-          const gameName = ctx.params.gameName;
-          const game = this.games.find((g) => g.name === gameName);
-          if (!game) return ctx.renderNotFound();
-          const filterPlayerView = getFilterPlayerView(game);
-          if (req.headers.get("upgrade") === "websocket") {
-            const { socket, response } = Deno.upgradeWebSocket(req);
-            const clientID = crypto.randomUUID();
-            socket.addEventListener("message", async (event) => {
-              const payload = JSON.parse(event.data);
-              switch (payload.type) {
-                case "update":
-                  {
-                    const args = payload.args as Parameters<Master["onUpdate"]>;
-                    const [, , matchID] = args;
-                    const transport = TransportAPI(
-                      matchID,
-                      socket,
-                      filterPlayerView,
-                      this.pubSub,
-                    );
-                    const master = new Master(
-                      game,
-                      this.db,
-                      transport,
-                      this.auth,
-                    );
-                    await this.getMatchQueue(matchID).add(() =>
-                      master.onUpdate(...args)
-                    );
-                  }
-                  break;
-                case "sync":
-                  {
-                    const args = payload.args as Parameters<Master["onSync"]>;
-                    const [matchID, playerID, credentials] = args;
-                    this.removeClient(clientID);
-                    const requestingClient = {
-                      socket,
-                      matchID,
-                      playerID,
-                      credentials,
-                    };
-                    const transport = TransportAPI(
-                      matchID,
-                      socket,
-                      filterPlayerView,
-                      this.pubSub,
-                    );
-                    const master = new Master(
-                      game,
-                      this.db,
-                      transport,
-                      this.auth,
-                    );
-                    const syncResponse = await master.onSync(...args);
-                    if (syncResponse && syncResponse.error === "unauthorized") {
-                      return;
-                    }
-                    this.addClient(clientID, requestingClient, game);
-                    await master.onConnectionChange(
-                      matchID,
-                      playerID,
-                      credentials,
-                      true,
-                    );
-                  }
-                  break;
-                case "chat": {
-                  const args = payload.args as Parameters<
-                    Master["onChatMessage"]
-                  >;
-                  const [matchID] = args;
+      path: "/ws/games/[name]",
+      handler: (req, ctx) => {
+        const name = ctx.params.name;
+        const game = this.games.find((g) => g.name === name);
+        if (!game) return ctx.renderNotFound();
+        const filterPlayerView = getFilterPlayerView(game);
+        if (
+          req.headers.get("connection") === "Upgrade" &&
+          req.headers.get("upgrade") === "websocket"
+        ) {
+          const { socket, response } = Deno.upgradeWebSocket(req);
+          const clientID = crypto.randomUUID();
+          socket.addEventListener("message", async (event) => {
+            const payload = JSON.parse(event.data);
+            switch (payload.type) {
+              case "update":
+                {
+                  const args = payload.args as Parameters<Master["onUpdate"]>;
+                  const [, , matchID] = args;
                   const transport = TransportAPI(
                     matchID,
                     socket,
@@ -202,18 +146,52 @@ export class WebSocketTransport {
                     transport,
                     this.auth,
                   );
-                  master.onChatMessage(...args);
-                  break;
+                  await this.getMatchQueue(matchID).add(() =>
+                    master.onUpdate(...args)
+                  );
                 }
-                default:
-                  break;
-              }
-            });
-            socket.addEventListener("close", async () => {
-              const client = this.clientInfo.get(clientID);
-              this.removeClient(clientID);
-              if (client) {
-                const { matchID, playerID, credentials } = client;
+                break;
+              case "sync":
+                {
+                  const args = payload.args as Parameters<Master["onSync"]>;
+                  const [matchID, playerID, credentials] = args;
+                  this.removeClient(clientID);
+                  const requestingClient = {
+                    socket,
+                    matchID,
+                    playerID,
+                    credentials,
+                  };
+                  const transport = TransportAPI(
+                    matchID,
+                    socket,
+                    filterPlayerView,
+                    this.pubSub,
+                  );
+                  const master = new Master(
+                    game,
+                    this.db,
+                    transport,
+                    this.auth,
+                  );
+                  const syncResponse = await master.onSync(...args);
+                  if (syncResponse && syncResponse.error === "unauthorized") {
+                    return;
+                  }
+                  this.addClient(clientID, requestingClient, game);
+                  await master.onConnectionChange(
+                    matchID,
+                    playerID,
+                    credentials,
+                    true,
+                  );
+                }
+                break;
+              case "chat": {
+                const args = payload.args as Parameters<
+                  Master["onChatMessage"]
+                >;
+                const [matchID] = args;
                 const transport = TransportAPI(
                   matchID,
                   socket,
@@ -226,18 +204,41 @@ export class WebSocketTransport {
                   transport,
                   this.auth,
                 );
-                await master.onConnectionChange(
-                  matchID,
-                  playerID,
-                  credentials,
-                  false,
-                );
+                master.onChatMessage(...args);
+                break;
               }
-            });
-            return response;
-          }
-          return ctx.next();
-        },
+              default:
+                break;
+            }
+          });
+          socket.addEventListener("close", async () => {
+            const client = this.clientInfo.get(clientID);
+            this.removeClient(clientID);
+            if (client) {
+              const { matchID, playerID, credentials } = client;
+              const transport = TransportAPI(
+                matchID,
+                socket,
+                filterPlayerView,
+                this.pubSub,
+              );
+              const master = new Master(
+                game,
+                this.db,
+                transport,
+                this.auth,
+              );
+              await master.onConnectionChange(
+                matchID,
+                playerID,
+                credentials,
+                false,
+              );
+            }
+          });
+          return response;
+        }
+        return ctx.next();
       },
     };
   }

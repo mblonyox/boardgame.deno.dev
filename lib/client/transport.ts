@@ -2,7 +2,7 @@ import { Transport } from "boardgame.io/internal";
 import { ChatMessage, CredentialedActionShape, State } from "boardgame.io";
 import { Master } from "boardgame.io/master";
 
-type Options = ConstructorParameters<typeof Transport>[0] & { prefix?: string };
+type Options = ConstructorParameters<typeof Transport>[0] & { base?: string };
 
 export class WebSocketTransport extends Transport {
   private url: URL;
@@ -10,12 +10,26 @@ export class WebSocketTransport extends Transport {
 
   constructor(opts: Options) {
     super(opts);
-    const prefix = opts.prefix;
+    const base = opts.base?.replace(/\/+$/, "") ?? "";
     const gameName = opts.gameName;
-    this.url = new URL(`${prefix}/game/${gameName}`);
+    this.url = new URL(
+      `${base}/ws/games/${gameName}`,
+      globalThis.location.origin.replace("http", "ws"),
+    );
   }
   connect(): void {
     this.socket = new WebSocket(this.url);
+    this.socket.addEventListener("open", () => {
+      this.requestSync();
+      this.setConnectionStatus(true);
+    });
+    this.socket.addEventListener("message", (event) => {
+      const data = JSON.parse(event.data);
+      this.notifyClient(data);
+    });
+    this.socket.addEventListener("close", () => {
+      this.setConnectionStatus(false);
+    });
   }
   disconnect(): void {
     this.socket?.close();

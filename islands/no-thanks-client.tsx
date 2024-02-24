@@ -1,8 +1,8 @@
 import { IS_BROWSER } from "$fresh/runtime.ts";
 import { Client } from "boardgame.io/client";
-import { Local } from "boardgame.io/multiplayer";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
+import { WebSocketTransport } from "~/lib/client/transport.ts";
 import { NoThanksGameState } from "~/lib/games/no-thanks.ts";
 import { NoThanks } from "~/lib/games/no-thanks.ts";
 
@@ -22,7 +22,7 @@ export default function NoThanksClient({ id }: Props) {
         numPlayers: 3,
         matchID: "",
         playerID: "",
-        multiplayer: Local(),
+        multiplayer: (opts) => new WebSocketTransport(opts),
       });
       client.start();
       client.subscribe((state) => setState(state));
