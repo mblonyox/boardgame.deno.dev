@@ -6,7 +6,7 @@ type Options = ConstructorParameters<typeof Transport>[0] & { base?: string };
 
 export class WebSocketTransport extends Transport {
   private url: URL;
-  private socket?: WebSocket;
+  private socket?: WebSocket | null;
 
   constructor(opts: Options) {
     super(opts);
@@ -17,6 +17,7 @@ export class WebSocketTransport extends Transport {
       globalThis.location.origin.replace("http", "ws"),
     );
   }
+
   connect(): void {
     this.socket = new WebSocket(this.url);
     this.socket.addEventListener("open", () => {
@@ -31,9 +32,13 @@ export class WebSocketTransport extends Transport {
       this.setConnectionStatus(false);
     });
   }
+
   disconnect(): void {
     this.socket?.close();
+    this.socket = null;
+    this.setConnectionStatus(false);
   }
+
   sendAction(state: State, action: CredentialedActionShape.Any): void {
     const args: Parameters<Master["onUpdate"]> = [
       action,
@@ -43,6 +48,7 @@ export class WebSocketTransport extends Transport {
     ];
     this.socket?.send(JSON.stringify({ type: "update", args }));
   }
+
   sendChatMessage(matchID: string, chatMessage: ChatMessage): void {
     const args: Parameters<Master["onChatMessage"]> = [
       matchID,
@@ -51,6 +57,7 @@ export class WebSocketTransport extends Transport {
     ];
     this.socket?.send(JSON.stringify({ type: "chat", args }));
   }
+
   requestSync(): void {
     const args: Parameters<Master["onSync"]> = [
       this.matchID,
@@ -60,14 +67,17 @@ export class WebSocketTransport extends Transport {
     ];
     this.socket?.send(JSON.stringify({ type: "sync", args }));
   }
+
   updateMatchID(id: string): void {
     this.matchID = id;
     this.requestSync();
   }
+
   updatePlayerID(id: string): void {
     this.playerID = id;
     this.requestSync();
   }
+
   updateCredentials(credentials?: string): void {
     this.credentials = credentials;
     this.requestSync();

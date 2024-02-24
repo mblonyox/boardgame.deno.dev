@@ -7,21 +7,27 @@ import { NoThanksGameState } from "~/lib/games/no-thanks.ts";
 import { NoThanks } from "~/lib/games/no-thanks.ts";
 
 type Props = {
-  id?: string;
+  matchID?: string;
+  playerID?: string;
+  credentials?: string;
+  debug?: boolean;
 };
 
 type ClientState<T> = ReturnType<ReturnType<typeof Client<T>>["getState"]>;
 
-export default function NoThanksClient({ id }: Props) {
+export default function NoThanksClient(
+  { matchID, playerID, credentials, debug }: Props,
+) {
   const [state, setState] = useState<ClientState<NoThanksGameState>>();
   const clientRef = useRef<ReturnType<typeof Client<NoThanksGameState>>>();
   useEffect(() => {
     if (IS_BROWSER) {
       const client = Client({
         game: NoThanks,
-        numPlayers: 3,
-        matchID: "",
-        playerID: "",
+        matchID,
+        playerID,
+        credentials,
+        debug,
         multiplayer: (opts) => new WebSocketTransport(opts),
       });
       client.start();

@@ -7,9 +7,9 @@ import * as $_layout from "./routes/_layout.tsx";
 import * as $_middleware from "./routes/_middleware.ts";
 import * as $index from "./routes/index.tsx";
 import * as $lobby_index from "./routes/lobby/index.tsx";
-import * as $no_thanks from "./routes/no-thanks.tsx";
+import * as $no_thanks_matchID_ from "./routes/no-thanks/[matchID].tsx";
 import * as $LobbyBrowser from "./islands/LobbyBrowser.tsx";
-import * as $no_thanks_client from "./islands/no-thanks-client.tsx";
+import * as $NoThanksClient from "./islands/NoThanksClient.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -19,11 +19,11 @@ const manifest = {
     "./routes/_middleware.ts": $_middleware,
     "./routes/index.tsx": $index,
     "./routes/lobby/index.tsx": $lobby_index,
-    "./routes/no-thanks.tsx": $no_thanks,
+    "./routes/no-thanks/[matchID].tsx": $no_thanks_matchID_,
   },
   islands: {
     "./islands/LobbyBrowser.tsx": $LobbyBrowser,
-    "./islands/no-thanks-client.tsx": $no_thanks_client,
+    "./islands/NoThanksClient.tsx": $NoThanksClient,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;
