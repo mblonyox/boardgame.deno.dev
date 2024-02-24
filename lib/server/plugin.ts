@@ -2,7 +2,7 @@ import type { Plugin } from "$fresh/server.ts";
 import { Game } from "boardgame.io";
 import { Async, Sync } from "boardgame.io/internal";
 import { GenericPubSub } from "boardgame.io/server";
-import { Auth, auth } from "./auth.ts";
+import { Auth } from "./auth.ts";
 import { API } from "./api.ts";
 import { KvStorage } from "./db.ts";
 import { WebSocketTransport } from "./transport.ts";
@@ -19,7 +19,7 @@ export function boardgameio(games: Game[], opts?: Options): Plugin {
   const db = opts?.db ?? new KvStorage();
   const pubSub = opts?.pubSub ?? new BroadcastChannelPubSub();
   const api = new API(games, db, pubSub);
-  const transport = new WebSocketTransport(games, db, pubSub, auth);
+  const transport = new WebSocketTransport(games, db, pubSub, opts?.auth);
 
   db.connect();
 
