@@ -27,12 +27,18 @@ export class BroadcastChannelPubSub<T = any> implements GenericPubSub<T> {
   }
 
   unsubscribeAll(channelId: string): void {
-    // try {
-      this.channels.get(channelId)?.deref()?.close();
-      this.channels.delete(channelId);
-    // } catch (error) {
-    //   if (error instanceof TypeError) return;
-    //   throw error;
-    // }
+    this.channels.get(channelId)?.deref()?.close();
+    this.channels.delete(channelId);
+  }
+
+  close(): void {
+    for (const channel of this.channels.values()) {
+      try {
+        channel.deref()?.close();
+      } catch (error) {
+        if (error instanceof TypeError) return;
+        throw error;
+      }
+    }
   }
 }
