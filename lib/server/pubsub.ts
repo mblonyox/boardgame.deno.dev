@@ -26,5 +26,6 @@ export class BroadcastChannelPubSub<T = any> implements GenericPubSub<T> {
 
   unsubscribeAll(channelId: string): void {
     this.channels.get(channelId)?.close();
+    this.channels.delete(channelId);
   }
 }
