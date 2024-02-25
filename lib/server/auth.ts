@@ -13,7 +13,7 @@ const authenticate = (
   return actionCredentials === playerMetadata.credentials;
 };
 
-export const auth = {
+export const defaultAuth = {
   generateCredentials: () => nanoid(),
   authenticateCredentials(
     { playerID, credentials, metadata }: {
@@ -22,8 +22,13 @@ export const auth = {
       metadata: Server.MatchData;
     },
   ): boolean | Promise<boolean> {
+    const hasCredentials = Object.values(metadata.players).some((p) =>
+      !!p.credentials
+    );
     const playerMetadata = metadata.players[playerID as unknown as number];
-    return !!credentials && !!playerMetadata &&
-      authenticate(credentials, playerMetadata);
+    return hasCredentials
+      ? !!credentials && !!playerMetadata &&
+        authenticate(credentials, playerMetadata)
+      : true;
   },
 } as unknown as Auth;

@@ -2,7 +2,7 @@ import type { Plugin } from "$fresh/server.ts";
 import { Game } from "boardgame.io";
 import { Async, Sync } from "boardgame.io/internal";
 import { GenericPubSub } from "boardgame.io/server";
-import { Auth, auth as defaultAuth } from "./auth.ts";
+import { Auth, defaultAuth } from "./auth.ts";
 import { API } from "./api.ts";
 import { KvStorage } from "./db.ts";
 import { WebSocketTransport } from "./transport.ts";
