@@ -1,50 +1,27 @@
-import { IS_BROWSER } from "$fresh/runtime.ts";
-import { Client } from "boardgame.io/client";
-import { useEffect, useRef, useState } from "preact/hooks";
-import { JSX } from "preact/jsx-runtime";
-import { WebSocketTransport } from "~/lib/client/transport.ts";
+import { JSX } from "preact";
 import { NoThanksGameState } from "~/lib/games/no-thanks.ts";
-import { NoThanks } from "~/lib/games/no-thanks.ts";
+import { ClientState } from "~/lib/client/types.ts";
 
 type Props = {
-  matchID?: string;
-  playerID?: string;
-  credentials?: string;
-  debug?: boolean;
+  state?: ClientState<NoThanksGameState>;
+  onMove?: (type: string, arg?: unknown[]) => void;
 };
 
-type ClientState<T> = ReturnType<ReturnType<typeof Client<T>>["getState"]>;
-
 export default function NoThanksClient(
-  { matchID, playerID, credentials, debug }: Props,
+  { state, onMove }: Props,
 ) {
-  const [state, setState] = useState<ClientState<NoThanksGameState>>();
-  const clientRef = useRef<ReturnType<typeof Client<NoThanksGameState>>>();
-  useEffect(() => {
-    if (IS_BROWSER) {
-      const client = Client({
-        game: NoThanks,
-        matchID,
-        playerID,
-        credentials,
-        debug,
-        multiplayer: (opts) => new WebSocketTransport(opts),
-      });
-      client.start();
-      client.subscribe((state) => setState(state));
-      clientRef.current = client;
-    }
-  }, []);
-  const g = state?.G;
   return (
     <>
       <div className="container text-center">
         <div className="row justify-content-center m-1 m-md-3">
           <div className="col-6 col-sm-4 col-md-3 col-lg-2">
-            <Deck size={g?.deckSize} />
+            <Deck size={state?.G?.deckSize} />
           </div>
           <div className="col-6 col-sm-4 col-md-3 col-lg-2">
-            <ActiveCard {...g?.activeCard} counters={g?.activeCounters} />
+            <ActiveCard
+              {...state?.G?.activeCard}
+              counters={state?.G?.activeCounters}
+            />
           </div>
         </div>
         <div className="row justify-content-center m-1 m-md-3">
@@ -70,14 +47,14 @@ export default function NoThanksClient(
                 <button
                   type="button"
                   className="btn btn-outline-primary m-1"
-                  onClick={() => clientRef.current?.moves?.take()}
+                  onClick={() => onMove?.("take")}
                 >
                   Take
                 </button>
                 <button
                   type="button"
                   className="btn btn-outline-primary m-1"
-                  onClick={() => clientRef.current?.moves?.pass()}
+                  onClick={() => onMove?.("pass")}
                 >
                   Pass
                 </button>
@@ -90,14 +67,16 @@ export default function NoThanksClient(
           )}
         </div>
         <div className="row justify-content-center m-1 m-md-3">
-          {Object.entries(g?.tableu ?? {}).map(([playerID, { cards }]) => (
+          {Object.entries(state?.G?.tableu ?? {}).map((
+            [playerID, { cards }],
+          ) => (
             <div className="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
               <div className="card">
                 <div className="card-title">Player: {playerID}</div>
                 <div className="card-body">
                   <p>
                     <span class="badge rounded-pill text-bg-info">
-                      Counter : {g?.players[playerID]?.counters ?? "?"}
+                      Counter : {state?.G?.players[playerID]?.counters ?? "?"}
                     </span>
                   </p>
                   <hr />

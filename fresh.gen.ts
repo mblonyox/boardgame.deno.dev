@@ -2,27 +2,27 @@
 // This file SHOULD be checked into source version control.
 // This file is automatically updated during development when running `dev.ts`.
 
+import * as $_game_match_ from "./routes/[game]/[match].tsx";
+import * as $_game_index from "./routes/[game]/index.tsx";
 import * as $_app from "./routes/_app.tsx";
 import * as $_layout from "./routes/_layout.tsx";
-import * as $_middleware from "./routes/_middleware.ts";
 import * as $index from "./routes/index.tsx";
-import * as $lobby_index from "./routes/lobby/index.tsx";
-import * as $no_thanks_matchID_ from "./routes/no-thanks/[matchID].tsx";
 import * as $LobbyBrowser from "./islands/LobbyBrowser.tsx";
+import * as $MatchClient from "./islands/MatchClient.tsx";
 import * as $NoThanksClient from "./islands/NoThanksClient.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
   routes: {
+    "./routes/[game]/[match].tsx": $_game_match_,
+    "./routes/[game]/index.tsx": $_game_index,
     "./routes/_app.tsx": $_app,
     "./routes/_layout.tsx": $_layout,
-    "./routes/_middleware.ts": $_middleware,
     "./routes/index.tsx": $index,
-    "./routes/lobby/index.tsx": $lobby_index,
-    "./routes/no-thanks/[matchID].tsx": $no_thanks_matchID_,
   },
   islands: {
     "./islands/LobbyBrowser.tsx": $LobbyBrowser,
+    "./islands/MatchClient.tsx": $MatchClient,
     "./islands/NoThanksClient.tsx": $NoThanksClient,
   },
   baseUrl: import.meta.url,

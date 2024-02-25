@@ -27,5 +27,15 @@ export function boardgameio(games: Game[], opts?: Options): Plugin {
   return {
     name: "boardgameio",
     routes: [...api.routes(), transport.route()],
+    middlewares: [{
+      path: "",
+      middleware: {
+        handler: (_req, ctx) => {
+          ctx.state.db = db;
+          ctx.state.games = games;
+          return ctx.next();
+        },
+      },
+    }],
   };
 }
