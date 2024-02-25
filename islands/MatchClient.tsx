@@ -1,5 +1,5 @@
 import { IS_BROWSER } from "$fresh/runtime.ts";
-import { Game } from "boardgame.io";
+import { FilteredMetadata, Game } from "boardgame.io";
 import { Client, LobbyClient } from "boardgame.io/client";
 import { ComponentType } from "preact";
 import { useCallback, useEffect, useRef, useState } from "preact/hooks";
@@ -7,11 +7,14 @@ import { WebSocketTransport } from "~/lib/client/transport.ts";
 import { ClientState } from "~/lib/client/types.ts";
 
 import NoThanksClient from "./NoThanksClient.tsx";
+import ConfirmReady from "./ConfirmReady.tsx";
 
 type BoardProps = {
   state?: ClientState;
   onMove?: (type: string, args?: unknown[]) => void;
 };
+
+type JoinedMatch = { playerID: string; playerCredentials: string };
 
 type Props<G> = {
   game: Game<G>;
@@ -19,9 +22,11 @@ type Props<G> = {
   debug?: boolean;
 };
 
-const getIdCreds = (matchID: string) => {
+const getJoinedMatchÏ = (matchID: string) => {
   if (IS_BROWSER) {
-    return localStorage.getItem(`matchID:${matchID}`);
+    return JSON.parse(
+      localStorage.getItem(`matchID:${matchID}`) ?? "null",
+    ) as JoinedMatch | null;
   }
 };
 
@@ -34,12 +39,16 @@ export default function MatchClient<G>(
 ) {
   const clientRef = useRef<ReturnType<typeof Client<G>>>();
   const lobbyClientRef = useRef<LobbyClient>();
-  const [idCreds, setIdCreds] = useState(getIdCreds(matchID));
+  const [joinedMatch, setJoinedMatch] = useState(getJoinedMatchÏ(matchID));
   const [state, setState] = useState<ClientState<G>>();
+  const [matchData, setMatchData] = useState<FilteredMetadata>();
   useEffect(() => {
     lobbyClientRef.current = new LobbyClient({ server: "/api" });
-    const [playerID, credentials] = idCreds?.split(":") ?? [];
-    clientRef.current = Client({
+  }, []);
+  useEffect(() => {
+    clientRef.current?.stop();
+    const { playerID, playerCredentials: credentials } = joinedMatch ?? {};
+    const client = Client({
       game,
       matchID,
       playerID,
@@ -47,12 +56,44 @@ export default function MatchClient<G>(
       debug,
       multiplayer: (opts) => new WebSocketTransport(opts),
     });
-    clientRef.current.start();
-    clientRef.current.subscribe((state) => setState(state));
-  }, []);
+    client.start();
+    client.subscribe((state) => {
+      setState(state);
+      setMatchData(client.matchData);
+    });
+    clientRef.current = client;
+  }, [joinedMatch]);
   const onMove = useCallback((type: string, args?: unknown[]) => {
     clientRef.current?.moves[type]?.(...(args ?? []));
   }, []);
+  const onJoinMatch = useCallback(async (playerID: string) => {
+    const result = await lobbyClientRef.current?.joinMatch(
+      game.name!,
+      matchID,
+      {
+        playerName: "unknown",
+        playerID,
+      },
+    );
+    if (result) {
+      localStorage.setItem(`matchID:${matchID}`, JSON.stringify(result));
+      setJoinedMatch(result);
+    }
+  }, []);
+  const onLeaveMatch = useCallback(async () => {
+    const { playerID, playerCredentials: credentials } = joinedMatch ?? {};
+    if (!playerID || !credentials) return;
+    await lobbyClientRef.current?.leaveMatch(game.name!, matchID, {
+      playerID,
+      credentials,
+    });
+    setJoinedMatch(null);
+  }, [joinedMatch]);
   const Board = boards[game.name!];
-  return <Board {...{ state, onMove }} />;
+  return (
+    <>
+      {false && <Board {...{ state, onMove }} />}
+      <ConfirmReady {...{ matchData, onJoinMatch, onLeaveMatch }} />
+    </>
+  );
 }

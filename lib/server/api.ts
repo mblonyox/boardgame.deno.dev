@@ -152,7 +152,7 @@ export class API {
         },
       },
     }, {
-      path: base + "/games/[name]/[id]/leave",
+      path: base + "/api/games/[name]/[id]/leave",
       handler: {
         POST: async (req, ctx) => {
           const matchID = ctx.params.id;
@@ -189,7 +189,7 @@ export class API {
         },
       },
     }, {
-      path: base + "/games/[name]/[id]/playAgain",
+      path: base + "/api/games/[name]/[id]/playAgain",
       handler: {
         POST: async (req, ctx) => {
           const matchID = ctx.params.id;
@@ -240,7 +240,7 @@ export class API {
         },
       },
     }, {
-      path: base + "/games/[name]/[id]/update",
+      path: base + "/api/games/[name]/[id]/update",
       handler: {
         POST: async (req, ctx) => {
           const matchID = ctx.params.id;
@@ -280,7 +280,7 @@ export class API {
         },
       },
     }, {
-      path: base + "/games/[name]/[id]/rename",
+      path: base + "/api/games/[name]/[id]/rename",
       handler: {
         POST: (_req, ctx) => {
           console.warn(

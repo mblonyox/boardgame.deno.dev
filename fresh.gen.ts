@@ -7,6 +7,7 @@ import * as $_game_index from "./routes/[game]/index.tsx";
 import * as $_app from "./routes/_app.tsx";
 import * as $_layout from "./routes/_layout.tsx";
 import * as $index from "./routes/index.tsx";
+import * as $ConfirmReady from "./islands/ConfirmReady.tsx";
 import * as $LobbyBrowser from "./islands/LobbyBrowser.tsx";
 import * as $MatchClient from "./islands/MatchClient.tsx";
 import * as $NoThanksClient from "./islands/NoThanksClient.tsx";
@@ -21,6 +22,7 @@ const manifest = {
     "./routes/index.tsx": $index,
   },
   islands: {
+    "./islands/ConfirmReady.tsx": $ConfirmReady,
     "./islands/LobbyBrowser.tsx": $LobbyBrowser,
     "./islands/MatchClient.tsx": $MatchClient,
     "./islands/NoThanksClient.tsx": $NoThanksClient,
