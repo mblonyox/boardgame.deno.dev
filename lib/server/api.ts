@@ -44,7 +44,7 @@ export class API {
   ) {
   }
 
-  private jsonResponse(data?: object) {
+  private jsonResponse(data = {}) {
     return new Response(
       JSON.stringify(data),
       {
