@@ -1,25 +1,26 @@
-import { Transport } from "boardgame.io/internal";
 import { ChatMessage, CredentialedActionShape, State } from "boardgame.io";
+import { Transport } from "boardgame.io/internal";
 import { Master } from "boardgame.io/master";
+import { default as ReconnectingWebSocket } from "reconnecting-websocket";
 
 type Options = ConstructorParameters<typeof Transport>[0] & { base?: string };
 
 export class WebSocketTransport extends Transport {
-  private url: URL;
-  private socket?: WebSocket | null;
+  private socket: ReconnectingWebSocket;
 
   constructor(opts: Options) {
     super(opts);
     const base = opts.base?.replace(/\/+$/, "") ?? "";
     const gameName = opts.gameName;
-    this.url = new URL(
+    const url = new URL(
       `${base}/ws/games/${gameName}`,
       globalThis.location.origin.replace("http", "ws"),
     );
-  }
-
-  connect(): void {
-    this.socket = new WebSocket(this.url);
+    this.socket = new ReconnectingWebSocket(
+      url.toString(),
+      [],
+      { startClosed: true },
+    );
     this.socket.addEventListener("open", () => {
       this.requestSync();
       this.setConnectionStatus(true);
@@ -33,10 +34,12 @@ export class WebSocketTransport extends Transport {
     });
   }
 
+  connect(): void {
+    this.socket.reconnect();
+  }
+
   disconnect(): void {
-    this.socket?.close();
-    this.socket = null;
-    this.setConnectionStatus(false);
+    this.socket.close();
   }
 
   sendAction(state: State, action: CredentialedActionShape.Any): void {
