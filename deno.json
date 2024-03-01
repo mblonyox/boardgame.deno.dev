@@ -20,9 +20,9 @@
     "boardgame.io/client": "https://esm.sh/boardgame.io@0.50.2&target=es2022&dev/client",
     "boardgame.io/server": "https://esm.sh/boardgame.io@0.50.2&target=deno/server",
     "nanoid": "https://esm.sh/nanoid@5.0.6",
+    "partysocket": "https://esm.sh/partysocket@1.0.0",
     "p-queue": "https://esm.sh/p-queue@8.0.1",
     "react": "https://esm.sh/preact@10.19.2/compat",
-    "reconnecting-websocket": "https://esm.sh/reconnecting-websocket@4.4.0",
     "unique-names-generator": "https://esm.sh/unique-names-generator@4.7.1"
   },
   "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact" },

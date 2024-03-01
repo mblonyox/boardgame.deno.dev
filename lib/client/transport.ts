@@ -1,12 +1,12 @@
 import { ChatMessage, CredentialedActionShape, State } from "boardgame.io";
 import { Transport } from "boardgame.io/internal";
 import { Master } from "boardgame.io/master";
-import { default as ReconnectingWebSocket } from "reconnecting-websocket";
+import { WebSocket } from "partysocket";
 
 type Options = ConstructorParameters<typeof Transport>[0] & { base?: string };
 
 export class WebSocketTransport extends Transport {
-  private socket: ReconnectingWebSocket;
+  private socket: WebSocket;
 
   constructor(opts: Options) {
     super(opts);
@@ -16,7 +16,7 @@ export class WebSocketTransport extends Transport {
       `${base}/ws/games/${gameName}`,
       globalThis.location.origin.replace("http", "ws"),
     );
-    this.socket = new ReconnectingWebSocket(
+    this.socket = new WebSocket(
       url.toString(),
       [],
       { startClosed: true },
@@ -49,7 +49,7 @@ export class WebSocketTransport extends Transport {
       this.matchID,
       this.playerID!,
     ];
-    this.socket?.send(JSON.stringify({ type: "update", args }));
+    this.socket.send(JSON.stringify({ type: "update", args }));
   }
 
   sendChatMessage(matchID: string, chatMessage: ChatMessage): void {
@@ -58,7 +58,7 @@ export class WebSocketTransport extends Transport {
       chatMessage,
       this.credentials,
     ];
-    this.socket?.send(JSON.stringify({ type: "chat", args }));
+    this.socket.send(JSON.stringify({ type: "chat", args }));
   }
 
   requestSync(): void {
@@ -68,7 +68,7 @@ export class WebSocketTransport extends Transport {
       this.credentials,
       this.numPlayers,
     ];
-    this.socket?.send(JSON.stringify({ type: "sync", args }));
+    this.socket.send(JSON.stringify({ type: "sync", args }));
   }
 
   updateMatchID(id: string): void {
