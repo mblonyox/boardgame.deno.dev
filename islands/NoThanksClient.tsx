@@ -1,31 +1,35 @@
 import { JSX } from "preact";
 import { NoThanksGameState } from "~/lib/games/no-thanks.ts";
 import { ClientState } from "~/lib/client/types.ts";
+import { ReadonlySignal } from "@preact/signals";
 
 type Props = {
-  state?: ClientState<NoThanksGameState>;
+  $clientState?: ReadonlySignal<ClientState<NoThanksGameState>>;
   onMove?: (type: string, arg?: unknown[]) => void;
 };
 
 export default function NoThanksClient(
-  { state, onMove }: Props,
+  { $clientState, onMove }: Props,
 ) {
+  const g = $clientState?.value?.G;
+  const ctx = $clientState?.value?.ctx;
+  const isActive = $clientState?.value?.isActive;
   return (
     <>
       <div className="container text-center">
         <div className="row justify-content-center m-1 m-md-3">
           <div className="col-6 col-sm-4 col-md-3 col-lg-2">
-            <Deck size={state?.G?.deckSize} />
+            <Deck size={g?.deckSize} />
           </div>
           <div className="col-6 col-sm-4 col-md-3 col-lg-2">
             <ActiveCard
-              {...state?.G?.activeCard}
-              counters={state?.G?.activeCounters}
+              {...g?.activeCard}
+              counters={g?.activeCounters}
             />
           </div>
         </div>
         <div className="row justify-content-center m-1 m-md-3">
-          {!!state?.ctx.gameover && (
+          {!!$clientState?.value?.ctx.gameover && (
             <>
               <div className="alert alert-danger">
                 Game Over.
@@ -40,7 +44,8 @@ export default function NoThanksClient(
               </div>
             </>
           )}
-          {!state?.ctx.gameover && state?.isActive &&
+          {!ctx?.gameover &&
+            isActive &&
             (
               <div className="alert alert-primary" role="alert">
                 Choose your action:
@@ -60,14 +65,14 @@ export default function NoThanksClient(
                 </button>
               </div>
             )}
-          {!state?.ctx.gameover && !state?.isActive && (
+          {!ctx?.gameover && !isActive && (
             <div className="alert alert-info">
-              Waiting player <strong>{state?.ctx.currentPlayer}</strong>
+              Waiting player <strong>{ctx?.currentPlayer}</strong>
             </div>
           )}
         </div>
         <div className="row justify-content-center m-1 m-md-3">
-          {Object.entries(state?.G?.tableu ?? {}).map((
+          {Object.entries(g?.tableu ?? {}).map((
             [playerID, { cards }],
           ) => (
             <div className="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
@@ -76,7 +81,7 @@ export default function NoThanksClient(
                 <div className="card-body">
                   <p>
                     <span class="badge rounded-pill text-bg-info">
-                      Counter : {state?.G?.players[playerID]?.counters ?? "?"}
+                      Counter : {g?.players[playerID]?.counters ?? "?"}
                     </span>
                   </p>
                   <hr />
@@ -107,8 +112,8 @@ export default function NoThanksClient(
                   </tr>
                 </thead>
                 <tbody>
-                  {!!state?.ctx.gameover &&
-                    Object.entries(state?.ctx.gameover.scores).map((
+                  {!!ctx?.gameover &&
+                    Object.entries(ctx.gameover.scores).map((
                       [playerID, score],
                     ) => (
                       <tr>
