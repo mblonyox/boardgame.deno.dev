@@ -2,29 +2,37 @@ import { JSX } from "preact";
 import { NoThanksGameState } from "~/lib/games/no-thanks.ts";
 import { ClientState } from "~/lib/client/types.ts";
 import { ReadonlySignal } from "@preact/signals";
+import { FilteredMetadata } from "boardgame.io";
 
 type Props = {
   $clientState?: ReadonlySignal<ClientState<NoThanksGameState>>;
+  $matchData?: ReadonlySignal<FilteredMetadata | null>;
   onMove?: (type: string, arg?: unknown[]) => void;
 };
 
 export default function NoThanksClient(
-  { $clientState, onMove }: Props,
+  { $clientState, $matchData, onMove }: Props,
 ) {
-  const g = $clientState?.value?.G;
+  const G = $clientState?.value?.G;
   const ctx = $clientState?.value?.ctx;
   const isActive = $clientState?.value?.isActive;
+  const players = $matchData?.value ?? [];
+  const currentPlayer = ctx?.currentPlayer
+    ? players[parseInt(ctx.currentPlayer)]
+    : null;
+  const hasCounter = !!ctx?.currentPlayer &&
+    (!G?.players[ctx.currentPlayer]?.counters);
   return (
     <>
       <div className="container text-center">
         <div className="row justify-content-center m-1 m-md-3">
           <div className="col-6 col-sm-4 col-md-3 col-lg-2">
-            <Deck size={g?.deckSize} />
+            <Deck size={G?.deckSize} />
           </div>
           <div className="col-6 col-sm-4 col-md-3 col-lg-2">
             <ActiveCard
-              {...g?.activeCard}
-              counters={g?.activeCounters}
+              {...G?.activeCard}
+              counters={G?.activeCounters}
             />
           </div>
         </div>
@@ -60,6 +68,7 @@ export default function NoThanksClient(
                   type="button"
                   className="btn btn-outline-primary m-1"
                   onClick={() => onMove?.("pass")}
+                  disabled={!hasCounter}
                 >
                   Pass
                 </button>
@@ -67,29 +76,47 @@ export default function NoThanksClient(
             )}
           {!ctx?.gameover && !isActive && (
             <div className="alert alert-info">
-              Waiting player <strong>{ctx?.currentPlayer}</strong>
+              Waiting player <strong>{currentPlayer?.name}</strong>
             </div>
           )}
         </div>
-        <div className="row justify-content-center m-1 m-md-3">
-          {Object.entries(g?.tableu ?? {}).map((
-            [playerID, { cards }],
-          ) => (
-            <div className="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
-              <div className="card">
-                <div className="card-title">Player: {playerID}</div>
-                <div className="card-body">
-                  <p>
-                    <span class="badge rounded-pill text-bg-info">
-                      Counter : {g?.players[playerID]?.counters ?? "?"}
+        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 justify-content-center my-3">
+          {players.map(({ id, name, isConnected }) => {
+            const counters = G?.players[id]?.counters;
+            const cards = G?.tableu?.[id]?.cards ?? [];
+            return (
+              <div className="col my-1">
+                <div className="card">
+                  <div className="card-title">
+                    <span className="btn btn-outline-secondary position-relative my-1">
+                      <strong>{name}</strong>
+                      {isConnected !== undefined &&
+                        (
+                          <span
+                            class={`position-absolute top-0 start-100 translate-middle p-2 border border-light rounded-circle bg-${
+                              isConnected ? "success" : "danger"
+                            }`}
+                          >
+                            <div className="visually-hidden">
+                              {isConnected ? "online" : "offline"}
+                            </div>
+                          </span>
+                        )}
                     </span>
-                  </p>
-                  <hr />
-                  <OwnedCards cards={cards} />
+                  </div>
+                  <div className="card-body">
+                    <p>
+                      <span class="badge rounded-pill text-bg-info">
+                        Counter : {counters ?? "?"}
+                      </span>
+                    </p>
+                    <hr />
+                    <OwnedCards cards={cards} />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
       <div

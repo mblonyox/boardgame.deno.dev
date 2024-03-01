@@ -21,6 +21,7 @@ type Client = ReturnType<typeof Client>;
 
 type BoardProps = {
   $clientState?: ReadonlySignal<ClientState>;
+  $matchData?: ReadonlySignal<FilteredMetadata | null>;
   onMove?: (type: string, args?: unknown[]) => void;
 };
 
@@ -84,9 +85,9 @@ export default function MatchClient<G>({ game, matchID, debug }: Props<G>) {
       <AssignPlayers {...{ gameName, matchID, $joinedMatch, $matchData }} />
     );
   }
-  const Board = boards[game.name!];
+  const Board = boards[gameName];
   const onMove = (type: string, args?: unknown[]) => {
     clientRef.current?.moves[type]?.(...(args ?? []));
   };
-  return <Board {...{ $clientState, onMove }} />;
+  return <Board {...{ $clientState, $matchData, onMove }} />;
 }
