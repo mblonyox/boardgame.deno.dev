@@ -7,8 +7,11 @@ import * as $_game_index from "./routes/[game]/index.tsx";
 import * as $_app from "./routes/_app.tsx";
 import * as $_layout from "./routes/_layout.tsx";
 import * as $index from "./routes/index.tsx";
-import * as $ConfirmReady from "./islands/ConfirmReady.tsx";
+import * as $AssignPlayers from "./islands/AssignPlayers.tsx";
 import * as $CreateMatchButton from "./islands/CreateMatchButton.tsx";
+import * as $JoinMatchButton from "./islands/JoinMatchButton.tsx";
+import * as $LeaveMatchButton from "./islands/LeaveMatchButton.tsx";
+import * as $LoadingSpinner from "./islands/LoadingSpinner.tsx";
 import * as $LobbyBrowser from "./islands/LobbyBrowser.tsx";
 import * as $MatchClient from "./islands/MatchClient.tsx";
 import * as $NoThanksClient from "./islands/NoThanksClient.tsx";
@@ -23,8 +26,11 @@ const manifest = {
     "./routes/index.tsx": $index,
   },
   islands: {
-    "./islands/ConfirmReady.tsx": $ConfirmReady,
+    "./islands/AssignPlayers.tsx": $AssignPlayers,
     "./islands/CreateMatchButton.tsx": $CreateMatchButton,
+    "./islands/JoinMatchButton.tsx": $JoinMatchButton,
+    "./islands/LeaveMatchButton.tsx": $LeaveMatchButton,
+    "./islands/LoadingSpinner.tsx": $LoadingSpinner,
     "./islands/LobbyBrowser.tsx": $LobbyBrowser,
     "./islands/MatchClient.tsx": $MatchClient,
     "./islands/NoThanksClient.tsx": $NoThanksClient,
