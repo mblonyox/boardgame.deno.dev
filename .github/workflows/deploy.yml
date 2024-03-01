@@ -25,7 +25,7 @@ jobs:
 
       - name: Build step
         run: "deno task build"
-        timout-minutes: 5
+        timeout-minutes: 5
         continue-on-error: true
 
       - name: Upload to Deno Deploy
