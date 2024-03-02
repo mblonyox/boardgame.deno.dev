@@ -7,7 +7,7 @@ import { GenericPubSub } from "boardgame.io/server";
 import { Auth } from "./auth.ts";
 
 type Client = {
-  socket: WebSocket;
+  socketRef: WeakRef<WebSocket>;
   matchID: string;
   playerID?: string | null;
   credentials?: string;
@@ -19,8 +19,8 @@ type IntermediateTransportData = Parameters<FilterPlayerView>[1];
 
 type TransportData = ReturnType<FilterPlayerView>;
 
-function emit(socket: WebSocket, data: TransportData) {
-  socket.send(JSON.stringify(data));
+function emit(socketRef: WeakRef<WebSocket>, data: TransportData) {
+  socketRef.deref()?.send(JSON.stringify(data));
 }
 
 function getPubSubChannelId(matchID: string): string {
@@ -29,13 +29,13 @@ function getPubSubChannelId(matchID: string): string {
 
 function TransportAPI(
   matchID: string,
-  socket: WebSocket,
+  socketRef: WeakRef<WebSocket>,
   filterPlayerView: FilterPlayerView,
   pubSub: GenericPubSub<IntermediateTransportData>,
 ): Master["transportAPI"] {
   return {
     send: ({ playerID, ...data }) =>
-      emit(socket, filterPlayerView(playerID, data)),
+      emit(socketRef, filterPlayerView(playerID, data)),
     sendAll: (payload) => pubSub.publish(getPubSubChannelId(matchID), payload),
   };
 }
@@ -88,8 +88,9 @@ export class WebSocketTransport {
       this.roomInfo.get(matchID)?.forEach((clientID) => {
         const client = this.clientInfo.get(clientID);
         if (client) {
-          const data = filterPlayerView(client.playerID ?? null, payload);
-          emit(client.socket, data);
+          const { socketRef, playerID } = client;
+          const data = filterPlayerView(playerID ?? null, payload);
+          emit(socketRef, data);
         }
       });
     };
@@ -127,7 +128,8 @@ export class WebSocketTransport {
         ) {
           const { socket, response } = Deno.upgradeWebSocket(req);
           const clientID = crypto.randomUUID();
-          socket.addEventListener("message", async (event) => {
+          const socketRef = new WeakRef(socket);
+          const messageEventHandler = async (event: MessageEvent) => {
             const payload = JSON.parse(event.data);
             switch (payload.type) {
               case "update":
@@ -136,7 +138,7 @@ export class WebSocketTransport {
                   const [, , matchID] = args;
                   const transport = TransportAPI(
                     matchID,
-                    socket,
+                    socketRef,
                     filterPlayerView,
                     this.pubSub,
                   );
@@ -156,15 +158,15 @@ export class WebSocketTransport {
                   const args = payload.args as Parameters<Master["onSync"]>;
                   const [matchID, playerID, credentials] = args;
                   this.removeClient(clientID);
-                  const requestingClient = {
-                    socket,
+                  const requestingClient: Client = {
+                    socketRef,
                     matchID,
                     playerID,
                     credentials,
                   };
                   const transport = TransportAPI(
                     matchID,
-                    socket,
+                    socketRef,
                     filterPlayerView,
                     this.pubSub,
                   );
@@ -194,7 +196,7 @@ export class WebSocketTransport {
                 const [matchID] = args;
                 const transport = TransportAPI(
                   matchID,
-                  socket,
+                  socketRef,
                   filterPlayerView,
                   this.pubSub,
                 );
@@ -204,21 +206,21 @@ export class WebSocketTransport {
                   transport,
                   this.auth,
                 );
-                master.onChatMessage(...args);
+                await master.onChatMessage(...args);
                 break;
               }
               default:
                 break;
             }
-          });
-          socket.addEventListener("close", async () => {
+          };
+          const closeEventHandler = async (_event: CloseEvent) => {
             const client = this.clientInfo.get(clientID);
             this.removeClient(clientID);
             if (client) {
               const { matchID, playerID, credentials } = client;
               const transport = TransportAPI(
                 matchID,
-                socket,
+                socketRef,
                 filterPlayerView,
                 this.pubSub,
               );
@@ -235,7 +237,11 @@ export class WebSocketTransport {
                 false,
               );
             }
-          });
+            socket.removeEventListener("message", messageEventHandler);
+            socket.removeEventListener("close", closeEventHandler);
+          };
+          socket.addEventListener("message", messageEventHandler);
+          socket.addEventListener("close", closeEventHandler);
           return response;
         }
         return ctx.next();
