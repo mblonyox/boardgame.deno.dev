@@ -23,12 +23,15 @@ jobs:
         with:
           deno-version: v2.x
           cache: true
-      
+
       - name: Run Deno tasks
         run: deno task --recursive build
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: "boardgame"
-          entrypoint: "./server/mod.ts"
+          project: boardgame
+          entrypoint: server/mod.ts
+          include: |
+            ./client/dist
+            ./server

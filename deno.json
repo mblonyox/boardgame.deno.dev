@@ -1,7 +1,21 @@
 {
-  "workspace": ["./client", "./server"],
+  "workspace": [
+    "./client",
+    "./server"
+  ],
   "imports": {
     "boardgame.io": "npm:boardgame.io@^0.50.2"
   },
-  "nodeModulesDir": "auto"
+  "nodeModulesDir": "auto",
+  "deploy": {
+    "project": "5655ef40-7cd6-4d21-afac-6806ecba136b",
+    "exclude": [
+      "**/node_modules"
+    ],
+    "include": [
+      "./client/dist",
+      "./server"
+    ],
+    "entrypoint": "server/mod.ts"
+  }
 }
