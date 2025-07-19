@@ -1,5 +1,6 @@
 {
   "imports": {
+    "@remixicon/react": "npm:@remixicon/react@^4.6.0",
     "@tanstack/react-router": "npm:@tanstack/react-router@^1.127.3",
     "@tanstack/router-plugin": "npm:@tanstack/router-plugin@^1.127.5",
     "@vitejs/plugin-react": "npm:@vitejs/plugin-react@^4.6.0",
