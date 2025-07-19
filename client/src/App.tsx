@@ -1,3 +1,10 @@
+import { RouterProvider } from "@tanstack/react-router";
+import { useSession } from "@hono/auth-js/react";
+
+import { router } from "./router.tsx";
+
 export default function App() {
-  return <h1>Hello from Boardgame.io Deno!</h1>;
+  const session = useSession();
+
+  return <RouterProvider router={router} context={{ session }} />;
 }

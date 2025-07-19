@@ -1,5 +1,7 @@
 {
   "imports": {
+    "@tanstack/react-router": "npm:@tanstack/react-router@^1.127.3",
+    "@tanstack/router-plugin": "npm:@tanstack/router-plugin@^1.127.5",
     "@vitejs/plugin-react": "npm:@vitejs/plugin-react@^4.6.0",
     "react": "npm:react@^19.1.0",
     "react-dom": "npm:react-dom@^19.1.0",

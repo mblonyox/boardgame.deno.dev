@@ -4,7 +4,9 @@
     "./server"
   ],
   "imports": {
-    "boardgame.io": "npm:boardgame.io@^0.50.2"
+    "@hono/auth-js": "npm:@hono/auth-js@^1.0.17",
+    "boardgame.io": "npm:boardgame.io@^0.50.2",
+    "zod": "npm:zod@^4.0.5"
   },
   "nodeModulesDir": "auto",
   "deploy": {

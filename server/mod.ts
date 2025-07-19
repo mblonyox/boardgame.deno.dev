@@ -1,18 +1,21 @@
 import { Hono } from "hono";
+import { showRoutes } from "hono/dev";
 import { serveStatic } from "hono/deno";
 
-import api from "./api.ts";
+import games from "./games.ts";
 import auth from "./auth.ts";
 
 export const app = new Hono();
-app.route("/api", api);
-app.route("/auth", auth);
+app.route("/", auth);
+app.route("/api/games", games);
 app.use(
   "*",
   serveStatic({
     root: "./client/dist",
   }),
 );
+
+showRoutes(app, {verbose: true});
 
 export const fetch = app.fetch;
 
