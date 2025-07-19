@@ -31,7 +31,5 @@ jobs:
         uses: denoland/deployctl@v1
         with:
           project: boardgame
-          entrypoint: server/mod.ts
-          include: |
-            ./client/dist
-            ./server
+          entrypoint: dist/server.js
+          include: ./dist

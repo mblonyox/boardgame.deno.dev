@@ -10,6 +10,7 @@
     "zod": "npm:zod@^3.24.4"
   },
   "tasks": {
-    "start": "deno serve --env-file --watch --host 127.0.0.1 --port 8000 -RNE mod.ts"
+    "start": "deno serve --env-file --watch --host 127.0.0.1 --port 8000 -RNE mod.ts",
+    "build": "deno bundle --minify -o ../dist/server.js mod.ts"
   }
 }

@@ -11,13 +11,9 @@
   "nodeModulesDir": "auto",
   "deploy": {
     "project": "5655ef40-7cd6-4d21-afac-6806ecba136b",
-    "exclude": [
-      "**/node_modules"
-    ],
     "include": [
-      "./client/dist",
-      "./server"
+      "./dist"
     ],
-    "entrypoint": "server/mod.ts"
+    "entrypoint": "dist/server.js"
   }
 }
