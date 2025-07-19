@@ -8,11 +8,12 @@ const createGameSchema = z.object({});
 
 const joinGameSchema = z.object({});
 
-const games = new Hono()
-  .use<{ Variables: { db: Storage } }>((c, next) => {
-    c.set("db", prefixStorage(db, "api"));
-    return next();
-  })
+const games = new Hono().basePath("/api/games");
+
+games.use<{ Variables: { db: Storage } }>((c, next) => {
+  c.set("db", prefixStorage(db, "api"));
+  return next();
+})
   .get("/:name", (c) => {
     const { name } = c.req.param();
     return c.json({ message: `Hello from /games/${name}` });

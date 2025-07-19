@@ -7,11 +7,14 @@ import games from "./games.ts";
 
 export const app = new Hono();
 app.route("/", auth);
-app.route("/api/games", games);
+app.route("/", games);
 app.use(
   "*",
   serveStatic({
     root: "./dist/client",
+    onNotFound: (_path, c) => {
+      c.html(Deno.readTextFile("./dist/client/index.html"), 404);
+    },
   }),
 );
 

@@ -11,7 +11,8 @@ import { db } from "./db.ts";
 
 const store = prefixStorage(db, "auth");
 
-const auth = new Hono();
+const auth = new Hono().basePath("/api");
+
 auth.use(
   "*",
   initAuthConfig((c) => ({
@@ -40,6 +41,7 @@ auth.use(
     adapter: UnstorageAdapter(store, { useItemRaw: true }),
   })),
 );
-auth.use("/api/auth/*", authHandler());
+
+auth.use("/auth/*", authHandler());
 
 export default auth;
