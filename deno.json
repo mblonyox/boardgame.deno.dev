@@ -3,6 +3,11 @@
     "./client",
     "./server"
   ],
+  "tasks": {
+    "start:client": "cd ./client && deno task start",
+    "start:server": "cd ./server && deno task start",
+    "start": { "dependencies": ["start:server", "start:client"] }
+  },
   "imports": {
     "@hono/auth-js": "npm:@hono/auth-js@^1.0.17",
     "boardgame.io": "npm:boardgame.io@^0.50.2",
