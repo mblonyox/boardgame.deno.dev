@@ -10,6 +10,14 @@ export default defineConfig({
     }),
     react(),
   ],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        silenceDeprecations: ["color-functions", "import"],
+        quietDeps: true,
+      },
+    },
+  },
   server: {
     proxy: {
       "/api": "http://127.0.0.1:8000",

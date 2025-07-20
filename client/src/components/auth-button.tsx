@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 export default function AuthButton() {
   const { data, status } = useSession();
 
-  if (status === "unauthenticated") {
+  if (status === "unauthenticated" || !data?.user) {
     return <Link to="/sign-in" className="outline" role="button">Sign In</Link>;
   }
 
@@ -12,7 +12,7 @@ export default function AuthButton() {
     <details className="dropdown">
       <summary>Account</summary>
       <ul>
-        <li>{data?.user?.name}</li>
+        <li>{data.user.name}</li>
         <li>
           <Link to="/profile">Profile</Link>
         </li>
