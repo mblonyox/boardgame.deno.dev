@@ -22,7 +22,9 @@ function RootComponent() {
         <nav className="container">
           <ul>
             <li>
-              <strong>Boardgame</strong>
+              <Link to="/">
+                <strong className="text-nowrap">🎲Boardgame!</strong>
+              </Link>
             </li>
           </ul>
           <ul>
@@ -52,7 +54,8 @@ function RootComponent() {
         <div className="container">
           <p>
             <small>
-              Boardgame is a collaborative platform for board game enthusiasts.
+              <strong className="text-nowrap">🎲Boardgame!</strong>{" "}
+              - the digital home for board game lovers everywhere!
             </small>
           </p>
         </div>

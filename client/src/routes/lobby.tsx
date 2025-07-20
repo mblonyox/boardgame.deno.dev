@@ -1,9 +1,17 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/lobby')({
+export const Route = createFileRoute("/lobby")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-  return <div>Hello "/lobby"!</div>
+  return (
+    <>
+      <hgroup className="text-center">
+        <h1>Lobby</h1>
+        <p>One lobby, infinite strategies.</p>
+      </hgroup>
+      <hr />
+    </>
+  );
 }
