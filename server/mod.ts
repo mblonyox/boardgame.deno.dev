@@ -8,6 +8,7 @@ import { extname } from "@std/path";
 
 import auth from "./auth.ts";
 import games from "./games.ts";
+import { env } from "hono/adapter";
 
 const root = "./dist/client";
 
@@ -18,7 +19,11 @@ app.route("/", auth);
 app.route("/", games);
 app.get(
   "*",
-  cache({ cacheName: "static", wait: true }),
+  cache({
+    cacheName: (c) => "static-" + env(c).DENO_DEPLOYMENT_ID,
+    cacheControl: "max-age=86400, public",
+    wait: true,
+  }),
   serveStatic({
     root,
     rewriteRequestPath: (path) => {
