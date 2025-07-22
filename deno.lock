@@ -1,37 +1,65 @@
 {
   "version": "5",
   "specifiers": {
+    "jsr:@std/assert@^1.0.13": "1.0.13",
+    "jsr:@std/expect@*": "1.0.16",
+    "jsr:@std/internal@^1.0.6": "1.0.9",
+    "jsr:@std/internal@^1.0.7": "1.0.9",
+    "jsr:@std/internal@^1.0.8": "1.0.9",
     "jsr:@std/internal@^1.0.9": "1.0.9",
     "jsr:@std/path@^1.1.1": "1.1.1",
+    "jsr:@std/testing@*": "1.0.14",
     "npm:@auth/core@0.40": "0.40.0_preact@10.24.3",
     "npm:@auth/unstorage-adapter@^2.10.0": "2.10.0_unstorage@1.16.1",
     "npm:@hono/auth-js@^1.0.17": "1.0.17_@auth+core@0.40.0__preact@10.24.3_hono@4.8.5_react@19.1.0",
     "npm:@hono/zod-validator@0.5": "0.5.0_hono@4.8.5_zod@3.25.76",
     "npm:@remixicon/react@^4.6.0": "4.6.0_react@19.1.0",
     "npm:@tanstack/react-router@^1.127.3": "1.128.0_react@19.1.0_react-dom@19.1.0__react@19.1.0",
-    "npm:@tanstack/router-plugin@^1.127.5": "1.128.0_@tanstack+react-router@1.128.0__react@19.1.0__react-dom@19.1.0___react@19.1.0_vite@7.0.5__picomatch@4.0.3_@babel+core@7.28.0_react@19.1.0_react-dom@19.1.0__react@19.1.0_sass-embedded@1.89.2",
+    "npm:@tanstack/router-plugin@^1.127.5": "1.128.0_@tanstack+react-router@1.128.0__react@19.1.0__react-dom@19.1.0___react@19.1.0_vite@7.0.5__picomatch@4.0.3_@babel+core@7.28.0_react@19.1.0_react-dom@19.1.0__react@19.1.0_sass-embedded@1.89.2_@types+node@22.15.15",
+    "npm:@types/node@*": "22.15.15",
     "npm:@types/react@*": "18.3.12",
-    "npm:@vitejs/plugin-react@^4.6.0": "4.6.0_vite@7.0.5__picomatch@4.0.3_@babel+core@7.28.0_sass-embedded@1.89.2",
+    "npm:@vitejs/plugin-react@^4.6.0": "4.6.0_vite@7.0.5__picomatch@4.0.3_@babel+core@7.28.0_sass-embedded@1.89.2_@types+node@22.15.15",
     "npm:boardgame.io@~0.50.2": "0.50.2",
     "npm:bootstrap@^5.3.7": "5.3.7_@popperjs+core@2.11.8",
     "npm:hono@^4.7.9": "4.8.5",
+    "npm:p-queue@^8.1.0": "8.1.0",
     "npm:react-dom@^19.1.0": "19.1.0_react@19.1.0",
     "npm:react@^19.1.0": "19.1.0",
     "npm:sass-embedded@^1.89.2": "1.89.2",
     "npm:unstorage@^1.16.1": "1.16.1",
-    "npm:vite@7.0.5": "7.0.5_picomatch@4.0.3_sass-embedded@1.89.2",
-    "npm:vite@^7.0.4": "7.0.5_picomatch@4.0.3_sass-embedded@1.89.2",
+    "npm:vite@7.0.5": "7.0.5_picomatch@4.0.3_sass-embedded@1.89.2_@types+node@22.15.15",
+    "npm:vite@^7.0.4": "7.0.5_picomatch@4.0.3_sass-embedded@1.89.2_@types+node@22.15.15",
     "npm:zod@^3.24.4": "3.25.76",
     "npm:zod@^4.0.5": "4.0.5"
   },
   "jsr": {
+    "@std/assert@1.0.13": {
+      "integrity": "ae0d31e41919b12c656c742b22522c32fb26ed0cba32975cb0de2a273cb68b29",
+      "dependencies": [
+        "jsr:@std/internal@^1.0.6"
+      ]
+    },
+    "@std/expect@1.0.16": {
+      "integrity": "ceeef6dda21f256a5f0f083fcc0eaca175428b523359a9b1d9b3a1df11cc7391",
+      "dependencies": [
+        "jsr:@std/assert",
+        "jsr:@std/internal@^1.0.7"
+      ]
+    },
     "@std/internal@1.0.9": {
       "integrity": "bdfb97f83e4db7a13e8faab26fb1958d1b80cc64366501af78a0aee151696eb8"
     },
     "@std/path@1.1.1": {
       "integrity": "fe00026bd3a7e6a27f73709b83c607798be40e20c81dde655ce34052fd82ec76",
       "dependencies": [
-        "jsr:@std/internal"
+        "jsr:@std/internal@^1.0.9"
+      ]
+    },
+    "@std/testing@1.0.14": {
+      "integrity": "144b3737105b9071cb50c957681f58a1b8ec0f3e5b19ad830f401c5fa931e8f0",
+      "dependencies": [
+        "jsr:@std/assert",
+        "jsr:@std/internal@^1.0.8"
       ]
     }
   },
@@ -804,6 +832,31 @@
         "vite@7.0.5_picomatch@4.0.3_sass-embedded@1.89.2"
       ]
     },
+    "@tanstack/router-plugin@1.128.0_@tanstack+react-router@1.128.0__react@19.1.0__react-dom@19.1.0___react@19.1.0_vite@7.0.5__picomatch@4.0.3_@babel+core@7.28.0_react@19.1.0_react-dom@19.1.0__react@19.1.0_sass-embedded@1.89.2_@types+node@22.15.15": {
+      "integrity": "sha512-HebeNn2AE8Ew4yhLc2kin5gTovSO20Y5bJBnJ6BJN3bX3sO4K1A4HzDof3oaW5bb4wqlESeVlZarD9zO9ANQ3Q==",
+      "dependencies": [
+        "@babel/core",
+        "@babel/plugin-syntax-jsx",
+        "@babel/plugin-syntax-typescript",
+        "@babel/template",
+        "@babel/traverse",
+        "@babel/types",
+        "@tanstack/react-router",
+        "@tanstack/router-core",
+        "@tanstack/router-generator",
+        "@tanstack/router-utils",
+        "@tanstack/virtual-file-routes",
+        "babel-dead-code-elimination",
+        "chokidar@3.6.0",
+        "unplugin",
+        "vite@7.0.5_picomatch@4.0.3_sass-embedded@1.89.2_@types+node@22.15.15",
+        "zod@3.25.76"
+      ],
+      "optionalPeers": [
+        "@tanstack/react-router",
+        "vite@7.0.5_picomatch@4.0.3_sass-embedded@1.89.2_@types+node@22.15.15"
+      ]
+    },
     "@tanstack/router-utils@1.121.21_@babel+core@7.28.0": {
       "integrity": "sha512-u7ubq1xPBtNiU7Fm+EOWlVWdgFLzuKOa1thhqdscVn8R4dNMUd1VoOjZ6AKmLw201VaUhFtlX+u0pjzI6szX7A==",
       "dependencies": [
@@ -1017,6 +1070,18 @@
         "vite@7.0.5_picomatch@4.0.3_sass-embedded@1.89.2"
       ]
     },
+    "@vitejs/plugin-react@4.6.0_vite@7.0.5__picomatch@4.0.3_@babel+core@7.28.0_sass-embedded@1.89.2_@types+node@22.15.15": {
+      "integrity": "sha512-5Kgff+m8e2PB+9j51eGHEpn5kUzRKH2Ry0qGoe8ItJg7pqnkPrYPkDQZGgGmTa0EGarHrkjLvOdU3b1fzI8otQ==",
+      "dependencies": [
+        "@babel/core",
+        "@babel/plugin-transform-react-jsx-self",
+        "@babel/plugin-transform-react-jsx-source",
+        "@rolldown/pluginutils",
+        "@types/babel__core",
+        "react-refresh",
+        "vite@7.0.5_picomatch@4.0.3_sass-embedded@1.89.2_@types+node@22.15.15"
+      ]
+    },
     "accepts@1.3.8": {
       "integrity": "sha512-PYAthTa2m2VKxuvSD3DPC/Gy+U+sOA1LAuT8mkmRuvw+NACSaeXEQ+NHcVF7rONl6qcaxV3Uuemwawk+7+SJLw==",
       "dependencies": [
@@ -1079,7 +1144,7 @@
         "koa-socket-2",
         "lodash.isplainobject",
         "nanoid",
-        "p-queue",
+        "p-queue@6.6.2",
         "prop-types",
         "react-cookies",
         "redux",
@@ -1392,6 +1457,9 @@
     },
     "eventemitter3@4.0.7": {
       "integrity": "sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw=="
+    },
+    "eventemitter3@5.0.1": {
+      "integrity": "sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA=="
     },
     "fdir@6.4.6_picomatch@4.0.3": {
       "integrity": "sha512-hiFoqpyZcfNm1yc4u8oWCf9A2c4D3QjCrks3zmoVKVxpQRzmPNar1hUJcBG2RQHvEVGDN+Jm81ZheVLAQMK6+w==",
@@ -1763,8 +1831,15 @@
     "p-queue@6.6.2": {
       "integrity": "sha512-RwFpb72c/BhQLEXIZ5K2e+AhgNVmIejGlTgiB9MzZ0e93GRvqZ7uSi0dvRF7/XIXDeNkra2fNHBxTyPDGySpjQ==",
       "dependencies": [
-        "eventemitter3",
-        "p-timeout"
+        "eventemitter3@4.0.7",
+        "p-timeout@3.2.0"
+      ]
+    },
+    "p-queue@8.1.0": {
+      "integrity": "sha512-mxLDbbGIBEXTJL0zEx8JIylaj3xQ7Z/7eEVjcF9fJX4DBiH9oqe+oahYnlKKxm0Ci9TlWTyhSHgygxMxjIB2jw==",
+      "dependencies": [
+        "eventemitter3@5.0.1",
+        "p-timeout@6.1.4"
       ]
     },
     "p-timeout@3.2.0": {
@@ -1772,6 +1847,9 @@
       "dependencies": [
         "p-finally"
       ]
+    },
+    "p-timeout@6.1.4": {
+      "integrity": "sha512-MyIV3ZA/PmyBN/ud8vV9XzwTrNtR4jFrObymZYnZqMmW0zA8Z17vnT0rBgFE/TlohB+YCHqXMgZzb3Csp49vqg=="
     },
     "parseurl@1.3.3": {
       "integrity": "sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ=="
@@ -2342,6 +2420,27 @@
       ],
       "bin": true
     },
+    "vite@7.0.5_picomatch@4.0.3_sass-embedded@1.89.2_@types+node@22.15.15": {
+      "integrity": "sha512-1mncVwJxy2C9ThLwz0+2GKZyEXuC3MyWtAAlNftlZZXZDP3AJt5FmwcMit/IGGaNZ8ZOB2BNO/HFUB+CpN0NQw==",
+      "dependencies": [
+        "@types/node",
+        "esbuild",
+        "fdir",
+        "picomatch@4.0.3",
+        "postcss",
+        "rollup",
+        "sass-embedded",
+        "tinyglobby"
+      ],
+      "optionalDependencies": [
+        "fsevents"
+      ],
+      "optionalPeers": [
+        "@types/node",
+        "sass-embedded"
+      ],
+      "bin": true
+    },
     "webpack-virtual-modules@0.6.2": {
       "integrity": "sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ=="
     },
@@ -2398,6 +2497,7 @@
           "npm:@auth/unstorage-adapter@^2.10.0",
           "npm:@hono/zod-validator@0.5",
           "npm:hono@^4.7.9",
+          "npm:p-queue@^8.1.0",
           "npm:unstorage@^1.16.1",
           "npm:zod@^3.24.4"
         ]

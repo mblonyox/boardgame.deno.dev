@@ -6,6 +6,7 @@
     "@auth/unstorage-adapter": "npm:@auth/unstorage-adapter@^2.10.0",
     "@hono/zod-validator": "npm:@hono/zod-validator@^0.5.0",
     "hono": "npm:hono@^4.7.9",
+    "p-queue": "npm:p-queue@^8.1.0",
     "unstorage": "npm:unstorage@^1.16.1",
     "zod": "npm:zod@^3.24.4"
   },
