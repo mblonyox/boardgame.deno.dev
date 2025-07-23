@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { env } from "hono/adapter";
 import { showRoutes } from "hono/dev";
 import { serveStatic } from "hono/deno";
 import { logger } from "hono/logger";
@@ -8,7 +9,7 @@ import { extname } from "@std/path";
 
 import auth from "./auth.ts";
 import games from "./games.ts";
-import { env } from "hono/adapter";
+import { SocketIO } from "./bgio/socket-io.ts";
 
 const root = "./dist/client";
 
@@ -35,4 +36,8 @@ app.get(
 
 showRoutes(app, { verbose: true });
 
-export default app satisfies Deno.ServeDefaultExport;
+const io = new SocketIO();
+
+export default {
+  fetch: io.handler(app),
+} satisfies Deno.ServeDefaultExport;

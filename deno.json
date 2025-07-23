@@ -21,5 +21,6 @@
       "./dist"
     ],
     "entrypoint": "dist/server.js"
-  }
+  },
+  "unstable": ["broadcast-channel", "kv"]
 }

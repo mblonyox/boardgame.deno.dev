@@ -1,13 +1,13 @@
 import { describe, it } from "jsr:@std/testing/bdd";
 import { expect, fn } from "jsr:@std/expect";
 
-import { BroadcastChannelPubSub } from "./pubsub.ts";
+import { BroadcastChannelPubSub } from "./broadcast-channel-pubsub.ts";
 
 const CHANNEL_FOO = "foo";
 
-describe("pubsub", () => {
+describe("BroadcastChannelPubSub", () => {
   it("should receive message from subscription", () => {
-    const pubSub = new BroadcastChannelPubSub<string>();
+    using pubSub = new BroadcastChannelPubSub<string>();
     const callback = fn() as () => void;
     pubSub.subscribe(CHANNEL_FOO, callback);
     const payload = "hello world";
@@ -16,7 +16,7 @@ describe("pubsub", () => {
   });
 
   it("should receive message from two subscriptions", () => {
-    const pubSub = new BroadcastChannelPubSub<string>();
+    using pubSub = new BroadcastChannelPubSub<string>();
     const callback1 = fn() as () => void;
     const callback2 = fn() as () => void;
     pubSub.subscribe(CHANNEL_FOO, callback1);
@@ -28,7 +28,7 @@ describe("pubsub", () => {
   });
 
   it("should unsubscribe", () => {
-    const pubSub = new BroadcastChannelPubSub<string>();
+    using pubSub = new BroadcastChannelPubSub<string>();
     const callback = fn() as () => void;
     pubSub.subscribe(CHANNEL_FOO, callback);
     pubSub.unsubscribeAll(CHANNEL_FOO);
@@ -38,7 +38,7 @@ describe("pubsub", () => {
   });
 
   it("should ignore extra unsubscribe", () => {
-    const pubSub = new BroadcastChannelPubSub<string>();
+    using pubSub = new BroadcastChannelPubSub<string>();
     const callback = fn() as () => void;
     pubSub.subscribe(CHANNEL_FOO, callback);
     pubSub.unsubscribeAll(CHANNEL_FOO);

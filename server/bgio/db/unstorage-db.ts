@@ -1,17 +1,20 @@
 import type { LogEntry, Server, State, StorageAPI } from "boardgame.io";
-import { Async } from "boardgame.io/internal";
-import { prefixStorage, type Storage } from "unstorage";
+import { createStorage, prefixStorage, type Storage } from "unstorage";
 
-export class UnstorageDb extends Async {
+export class UnstorageDb implements StorageAPI.Async {
   private store: Storage;
-  constructor(store: Storage) {
-    super();
+  constructor(store?: Storage) {
+    if (!store) store = createStorage();
     this.store = prefixStorage(store, "bgio");
   }
 
-  override async connect() {}
+  type(): StorageAPI.Type {
+    return 1;
+  }
 
-  override async createMatch(
+  async connect() {}
+
+  async createMatch(
     matchID: string,
     opts: StorageAPI.CreateMatchOpts,
   ): Promise<void> {
@@ -22,21 +25,21 @@ export class UnstorageDb extends Async {
     await this.setMetadata(matchID, opts.metadata);
   }
 
-  override async setState(
+  async setState(
     matchID: string,
     state: State,
     deltalog?: LogEntry[],
   ) {
     if (deltalog && deltalog.length > 0) {
       const key = LogKey(matchID);
-      const log: LogEntry[] = ((await this.store.getItem(key)) as LogEntry[]) ||
+      const log: LogEntry[] = (await this.store.getItem<LogEntry[]>(key)) ||
         [];
       await this.store.setItem(key, [...log, ...deltalog]);
     }
     return await this.store.setItem(matchID, state);
   }
 
-  override async setMetadata(
+  async setMetadata(
     matchID: string,
     metadata: Server.MatchData,
   ) {
@@ -44,7 +47,7 @@ export class UnstorageDb extends Async {
     return await this.store.setItem(key, metadata);
   }
 
-  override async fetch<O extends StorageAPI.FetchOpts>(
+  async fetch<O extends StorageAPI.FetchOpts>(
     matchID: string,
     opts: O,
   ): Promise<StorageAPI.FetchResult<O>> {
@@ -76,17 +79,17 @@ export class UnstorageDb extends Async {
     return result as StorageAPI.FetchResult<O>;
   }
 
-  override async wipe(matchID: string) {
+  async wipe(matchID: string) {
     await this.store.removeItem(matchID);
     await this.store.removeItem(InitialStateKey(matchID));
     await this.store.removeItem(LogKey(matchID));
     await this.store.removeItem(MetadataKey(matchID));
   }
 
-  override async listMatches(
+  async listMatches(
     opts?: StorageAPI.ListMatchesOpts,
   ): Promise<string[]> {
-    const keys = await this.store.keys();
+    const keys = await this.store.getKeys();
     const suffix = ":metadata";
 
     const arr = await Promise.all(

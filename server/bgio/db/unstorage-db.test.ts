@@ -1,4 +1,5 @@
-import { UnstorageDb } from "./db.ts";
+// deno-lint-ignore-file no-explicit-any
+import { UnstorageDb } from "./unstorage-db.ts";
 import type { LogEntry, Server, State } from "boardgame.io";
 import {
   afterEach,
@@ -10,7 +11,7 @@ import {
 import { expect } from "jsr:@std/expect";
 import { createStorage } from "unstorage";
 
-describe("FlatFile", () => {
+describe("UnstorageDb", () => {
   let db: UnstorageDb;
 
   beforeAll(async () => {

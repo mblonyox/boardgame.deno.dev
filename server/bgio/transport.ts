@@ -120,7 +120,7 @@ export class WebSocketTransport {
   }
 
   app() {
-    new Hono().get(
+    return new Hono().get(
       "/ws/:name",
       createMiddleware(async (c, next) => {
         const { name } = c.req.param();
